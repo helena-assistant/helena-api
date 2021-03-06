@@ -1,0 +1,22 @@
+{
+  "name": "helena-api",
+  "version": "1.0.0",
+  "description": "This is the Serverless API that connects with the Helena Watson skill",
+  "main": "index.js",
+  "scripts": {
+    "start": "AWS_PROFILE=helena sls offline"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helena-assistant/helena-api.git"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "Guilherme Monteiro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/helena-assistant/helena-api/issues"
+  },
+  "homepage": "https://github.com/helena-assistant/helena-api#readme"
+}
