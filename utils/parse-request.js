@@ -1,7 +1,9 @@
-import { jsonParse } from "./json-parse";
+const jsonParse = require("./json-parse");
 
-export const parseRequest = (event) => {
+const parseRequest = (event) => {
   const { body } = event;
   if (!body) return undefined;
   return jsonParse(body);
 };
+
+module.exports = parseRequest;

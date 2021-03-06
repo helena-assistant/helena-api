@@ -1,7 +1,7 @@
-import { parseRequest } from "../utils/parse-request";
-import { DynamoDB } from "aws-sdk";
+const parseRequest = require("../utils/parse-request");
+const AWS = require("aws-sdk");
 
-const dynamoDb = new DynamoDB.DocumentClient();
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = (event, context, callback) => {
   const { message } = parseRequest(event);

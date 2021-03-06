@@ -1,4 +1,4 @@
-export const jsonParse = (data) => {
+const jsonParse = (data) => {
   try {
     return JSON.parse(data);
   } catch (error) {
@@ -16,3 +16,5 @@ export const jsonParse = (data) => {
     ]);
   }
 };
+
+module.exports = jsonParse;
