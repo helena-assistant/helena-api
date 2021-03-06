@@ -1,12 +1,21 @@
 const AssistantV2 = require("ibm-watson/assistant/v2");
+const { IamAuthenticator } = require("ibm-watson/auth");
 
-export class WatsonService {
-  assistant = new AssistantV2({
-    version: "2019-02-28",
-    authenticator: new IamAuthenticator({
-      apikey: process.env.WATSON_ASSISTANT_IAM_APIKEY,
-    }),
-  });
+class WatsonService {
+  assistant = null;
+
+  constructor() {
+    try {
+      this.assistant = new AssistantV2({
+        version: "2019-02-28",
+        authenticator: new IamAuthenticator({
+          apikey: process.env.WATSON_ASSISTANT_IAM_APIKEY,
+        }),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   getSession = async () => {
     const response = await this.assistant.createSession({
@@ -24,17 +33,15 @@ export class WatsonService {
     },
   });
 
-  sendAssistantMessage = async (payload, user) => {
+  sendAssistantMessage = async (message, sessionId) => {
+    const payload = this.getPayload(message, sessionId);
     try {
       return this.assistant.message(payload);
     } catch (e) {
       payload.sessionId = await this.getSession();
-      console.log(payload);
-      // await botUsers.findByIdAndUpdate(user._id, {
-      //   phone: user.phone,
-      //   sessionId: payload.sessionId,
-      // });
       return this.assistant.message(payload);
     }
   };
 }
+
+module.exports = new WatsonService();
