@@ -1,13 +1,16 @@
 service: helena-api
 
-frameworkVersion: ">=1.1.0 <=2.23.0"
+frameworkVersion: ">=1.1.0"
 
 provider:
   name: aws
   region: sa-east-1
+  useDotenv: true
   runtime: nodejs12.x
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    WATSON_ASSISTANT_IAM_APIKEY: ${env:WATSON_ASSISTANT_IAM_APIKEY}
+    WATSON_ASSISTANT_ID: ${env:WATSON_ASSISTANT_ID}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -19,8 +22,9 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
-  plugins:
-    - serverless-offline
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
 
 functions:
   dialog:
@@ -33,7 +37,7 @@ functions:
 
 resources:
   Resources:
-    TodosDynamoDbTable:
+    DialogDynamoDbTable:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
