@@ -1,18 +1,18 @@
 const parseRequest = require("../utils/parse-request");
 const responseHandler = require("../utils/response-handler");
-const WatsonService = require("../services/watson");
+const watsonService = require("../services/watson");
 const createMessage = require("../repositories/messages");
 
 const handler = async (event) => {
   const deps = handler.dependencies();
   const { message, sessionId } = deps.parseRequest(event);
 
-  const watsonResponse = await WatsonService.sendAssistantMessage(
+  const watsonResponse = await deps.watsonService.sendAssistantMessage(
     message,
     sessionId
   );
 
-  const features = WatsonService.extractFeatures(watsonResponse);
+  const features = deps.watsonService.extractFeatures(watsonResponse);
 
   await deps.createMessage({
     user_message: message,
@@ -27,6 +27,7 @@ handler.dependencies = () => ({
   parseRequest,
   responseHandler,
   createMessage,
+  watsonService,
 });
 
 module.exports = { handler };
