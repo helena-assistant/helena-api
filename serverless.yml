@@ -8,15 +8,19 @@ provider:
   useDotenv: true
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: dialog-table-${opt:stage, self:provider.stage}
+    DYNAMODB_TABLE: dialog-table
     WATSON_ASSISTANT_IAM_APIKEY: ${env:WATSON_ASSISTANT_IAM_APIKEY}
     WATSON_ASSISTANT_ID: ${env:WATSON_ASSISTANT_ID}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:PutItem
+  apiGateway:
+    shouldStartNameWithService: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
 
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 plugins:
   - serverless-offline
@@ -46,10 +50,10 @@ resources:
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: message_id
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: message_id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
