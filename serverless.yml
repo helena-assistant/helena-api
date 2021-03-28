@@ -8,18 +8,14 @@ provider:
   useDotenv: true
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    DYNAMODB_TABLE: dialog-table-${opt:stage, self:provider.stage}
     WATSON_ASSISTANT_IAM_APIKEY: ${env:WATSON_ASSISTANT_IAM_APIKEY}
     WATSON_ASSISTANT_ID: ${env:WATSON_ASSISTANT_ID}
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
         - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
+
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 plugins:
@@ -33,6 +29,14 @@ functions:
       - http:
           path: /dialog
           method: post
+          cors: true
+
+  session:
+    handler: handlers/session.handler
+    events:
+      - http:
+          path: /session
+          method: get
           cors: true
 
 resources:
