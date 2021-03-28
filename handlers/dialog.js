@@ -1,6 +1,7 @@
 const parseRequest = require("../utils/parse-request");
 const responseHandler = require("../utils/response-handler");
 const WatsonService = require("../services/watson");
+const createMessage = require("../repositories/messages");
 
 const handler = async (event) => {
   const deps = handler.dependencies();
@@ -11,13 +12,21 @@ const handler = async (event) => {
     sessionId
   );
 
+  const features = WatsonService.extractFeatures(watsonResponse);
+
+  await deps.createMessage({
+    user_message: message,
+    session_id: sessionId,
+    ...features,
+  });
+
   return deps.responseHandler(200, watsonResponse);
 };
 
 handler.dependencies = () => ({
   parseRequest,
   responseHandler,
-  dynamoDb,
+  createMessage,
 });
 
 module.exports = { handler };
