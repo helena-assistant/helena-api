@@ -4,7 +4,7 @@ class DynamoDB {
   dynamoDb = null;
 
   constructor() {
-    dynamoDb = new AWS.DynamoDB.DocumentClient();
+    this.dynamoDb = new AWS.DynamoDB.DocumentClient();
   }
 
   async create(item) {

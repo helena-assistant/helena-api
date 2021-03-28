@@ -1,7 +1,7 @@
 const parseRequest = require("../utils/parse-request");
 const responseHandler = require("../utils/response-handler");
 const watsonService = require("../services/watson");
-const createMessage = require("../repositories/messages");
+const createMessage = require("../repositories/messages/create");
 
 const handler = async (event) => {
   const deps = handler.dependencies();

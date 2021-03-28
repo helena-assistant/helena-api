@@ -46,27 +46,35 @@ class WatsonService {
   extractFeatures = (response) => {
     const { intents, generic, entities } = response.result.output;
     const was_answered = intents.length > 0;
-
-    const {
-      intent: main_intent,
-      confidence: main_intent_confidence,
-    } = intents[0];
-
     const { response_type, suggestions } = generic[0];
 
-    const mappedSuggestions = suggestions
-      ? suggestions.map((suggestion) => ({
-          propensity: suggestion.internal?.propensity,
-          label: suggestion.label,
-        }))
-      : [];
+    if (was_answered) {
+      const {
+        intent: main_intent,
+        confidence: main_intent_confidence,
+      } = intents[0];
+
+      const mappedSuggestions = suggestions
+        ? suggestions.map((suggestion) => ({
+            propensity: suggestion.internal?.propensity,
+            label: suggestion.label,
+          }))
+        : [];
+
+      return {
+        main_intent,
+        main_intent_confidence,
+        was_answered,
+        response_type,
+        suggestions: mappedSuggestions,
+        intents,
+        entities,
+      };
+    }
 
     return {
-      main_intent,
-      main_intent_confidence,
-      was_answered,
       response_type,
-      suggestions: mappedSuggestions,
+      was_answered,
       intents,
       entities,
     };
