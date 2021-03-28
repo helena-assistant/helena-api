@@ -21,6 +21,7 @@ class WatsonService {
     const response = await this.assistant.createSession({
       assistantId: process.env.WATSON_ASSISTANT_ID,
     });
+
     return response.result.session_id;
   };
 
@@ -56,7 +57,7 @@ class WatsonService {
 
       const mappedSuggestions = suggestions
         ? suggestions.map((suggestion) => ({
-            propensity: suggestion.internal?.propensity,
+            propensity: suggestion.internal.propensity,
             label: suggestion.label,
           }))
         : [];
