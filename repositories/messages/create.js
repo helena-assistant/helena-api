@@ -13,18 +13,22 @@ const create = async ({
   entities,
 }) => {
   const { storage, uuid } = create.dependencies();
-  return storage.create({
-    message_id: uuid(),
-    user_message,
-    session_id,
-    main_intent,
-    main_intent_confidence,
-    was_answered,
-    response_type,
-    suggestions,
-    intents,
-    entities,
-  });
+  try {
+    return storage.create({
+      message_id: uuid(),
+      user_message,
+      session_id,
+      main_intent,
+      main_intent_confidence,
+      was_answered,
+      response_type,
+      suggestions,
+      intents,
+      entities,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 create.dependencies = () => ({

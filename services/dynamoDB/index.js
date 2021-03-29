@@ -9,6 +9,7 @@ class DynamoDB {
 
   async create(item) {
     const dateISOString = new Date().toISOString();
+
     const params = {
       TableName: process.env.DYNAMODB_TABLE,
       Item: {
@@ -18,7 +19,25 @@ class DynamoDB {
       },
     };
 
-    return this.dynamoDb.put(params);
+    return new Promise((resolve, reject) => {
+      this.dynamoDb.put(params, (error) => {
+        if (error) {
+          console.error(error);
+          reject(null, {
+            statusCode: error.statusCode || 501,
+            headers: { "Content-Type": "text/plain" },
+            body: "Couldn't create the item. Some error occurred while saving",
+          });
+          return;
+        }
+
+        const response = {
+          statusCode: 200,
+          body: JSON.stringify(params.Item),
+        };
+        resolve(response);
+      });
+    });
   }
 }
 
