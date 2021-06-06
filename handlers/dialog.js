@@ -5,7 +5,9 @@ const createMessage = require("../repositories/messages/create");
 
 const handler = async (event) => {
   const deps = handler.dependencies();
-  const { message, sessionId } = deps.parseRequest(event);
+  const {
+    body: { message, sessionId },
+  } = deps.parseRequest(event);
 
   const watsonResponse = await deps.watsonService.sendAssistantMessage(
     message,

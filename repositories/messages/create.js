@@ -1,5 +1,4 @@
 const storage = require("../../services/dynamoDB");
-const { uuid } = require("uuidv4");
 
 const create = async ({
   user_message,
@@ -12,10 +11,9 @@ const create = async ({
   intents,
   entities,
 }) => {
-  const { storage, uuid } = create.dependencies();
+  const { storage } = create.dependencies();
   try {
     return storage.create({
-      message_id: uuid(),
       user_message,
       session_id,
       main_intent,
@@ -33,7 +31,6 @@ const create = async ({
 
 create.dependencies = () => ({
   storage,
-  uuid,
 });
 
 module.exports = create;

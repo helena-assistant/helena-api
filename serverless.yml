@@ -1,6 +1,6 @@
 service: helena-api
 
-frameworkVersion: ">=1.1.0"
+frameworkVersion: '>=1.1.0'
 
 provider:
   name: aws
@@ -20,7 +20,7 @@ provider:
           Action:
             - dynamodb:PutItem
 
-          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+          Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}'
 
 plugins:
   - serverless-offline
@@ -43,19 +43,27 @@ functions:
           method: get
           cors: true
 
+  list-by-intent:
+    handler: handlers/list-by-intent.handler
+    events:
+      - http:
+          path: /list
+          method: get
+          cors: true
+
 resources:
   Resources:
     DialogDynamoDbTable:
-      Type: "AWS::DynamoDB::Table"
+      Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
-          - AttributeName: message_id
+          - AttributeName: main_intent
             AttributeType: S
         KeySchema:
-          - AttributeName: message_id
+          - AttributeName: main_intent
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
         TableName: ${self:provider.environment.DYNAMODB_TABLE}

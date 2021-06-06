@@ -32,8 +32,39 @@ class DynamoDB {
         }
 
         const response = {
-          statusCode: 200,
+          statusCode: 201,
           body: JSON.stringify(params.Item),
+        };
+
+        resolve(response);
+      });
+    });
+  }
+
+  async query(pk) {
+    const params = {
+      TableName: process.env.DYNAMODB_TABLE,
+      KeyConditionExpression: "main_intent = :main_intent",
+      ExpressionAttributeValues: {
+        ":main_intent": pk,
+      },
+    };
+
+    return new Promise((resolve, reject) => {
+      this.dynamoDb.query(params, (error, data) => {
+        if (error) {
+          console.error(error);
+          reject(null, {
+            statusCode: error.statusCode || 501,
+            headers: { "Content-Type": "text/plain" },
+            body: "Some error occurred while listing",
+          });
+          return;
+        }
+
+        const response = {
+          statusCode: 200,
+          body: data.Items,
         };
         resolve(response);
       });
