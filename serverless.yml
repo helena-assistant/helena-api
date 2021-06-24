@@ -9,7 +9,8 @@ provider:
   useDotenv: true
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: dialog-table
+    DIALOG_TABLE: dialog-table
+    INTENTS_TABLE: intents-table
     WATSON_ASSISTANT_IAM_APIKEY: ${env:WATSON_ASSISTANT_IAM_APIKEY}
     WATSON_ASSISTANT_ID: ${env:WATSON_ASSISTANT_ID}
   apiGateway:
@@ -22,7 +23,13 @@ provider:
             - dynamodb:PutItem
             - dynamodb:Query
 
-          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DIALOG_TABLE}"
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:Scan
+
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.INTENTS_TABLE}"
 
 plugins:
   - serverless-offline
@@ -52,6 +59,13 @@ functions:
           path: /list
           method: get
           cors: true
+  list-intents:
+    handler: handlers/list-intents.handler
+    events:
+      - http:
+          path: /intents/list
+          method: get
+          cors: true
 
 resources:
   Resources:
@@ -68,4 +82,19 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 10
           WriteCapacityUnits: 10
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        TableName: ${self:provider.environment.DIALOG_TABLE}
+
+    IntentsDynamoDbTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: intent
+            AttributeType: S
+        KeySchema:
+          - AttributeName: intent
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.INTENTS_TABLE}

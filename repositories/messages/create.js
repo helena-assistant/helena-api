@@ -12,8 +12,12 @@ const create = async ({
   entities,
 }) => {
   const { storage } = create.dependencies();
-  try {
-    return storage.create({
+
+  const dateISOString = new Date().toISOString();
+
+  const params = {
+    TableName: process.env.DIALOG_TABLE,
+    Item: {
       user_message,
       session_id,
       main_intent,
@@ -23,7 +27,13 @@ const create = async ({
       suggestions,
       intents,
       entities,
-    });
+      createdAt: dateISOString,
+      updatedAt: dateISOString,
+    },
+  };
+
+  try {
+    return storage.create(params);
   } catch (err) {
     console.log(err);
   }
