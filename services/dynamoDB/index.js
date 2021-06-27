@@ -1,4 +1,5 @@
 const AWS = require("aws-sdk");
+const { NOT_ANSWERED_INTENT } = require("../../constants");
 
 class DynamoDB {
   dynamoDb = null;
@@ -56,6 +57,29 @@ class DynamoDB {
   async list(params) {
     return new Promise((resolve, reject) => {
       this.dynamoDb.scan(params, (error, data) => {
+        if (error) {
+          console.error(error);
+          reject(null, {
+            statusCode: error.statusCode || 500,
+            headers: { "Content-Type": "text/plain" },
+            body: "Some error occurred while scanning",
+          });
+          return;
+        }
+
+        const response = {
+          statusCode: 200,
+          body: data.Items,
+        };
+
+        resolve(response);
+      });
+    });
+  }
+
+  async update(params) {
+    return new Promise((resolve, reject) => {
+      this.dynamoDb.update(params, (error, data) => {
         if (error) {
           console.error(error);
           reject(null, {

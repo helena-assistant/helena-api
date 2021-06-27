@@ -1,5 +1,6 @@
 const AssistantV2 = require("ibm-watson/assistant/v2");
 const { IamAuthenticator } = require("ibm-watson/auth");
+const { NOT_ANSWERED_INTENT } = require("../../constants");
 
 class WatsonService {
   assistant = null;
@@ -50,10 +51,8 @@ class WatsonService {
     const { response_type, suggestions } = generic[0];
 
     if (was_answered) {
-      const {
-        intent: main_intent,
-        confidence: main_intent_confidence,
-      } = intents[0];
+      const { intent: main_intent, confidence: main_intent_confidence } =
+        intents[0];
 
       const mappedSuggestions = suggestions
         ? suggestions.map((suggestion) => ({
@@ -74,6 +73,8 @@ class WatsonService {
     }
 
     return {
+      main_intent: NOT_ANSWERED_INTENT,
+      main_intent_confidence: 1,
       response_type,
       was_answered,
       intents,

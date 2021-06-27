@@ -2,6 +2,7 @@ const parseRequest = require("../utils/parse-request");
 const responseHandler = require("../utils/response-handler");
 const watsonService = require("../services/watson");
 const createMessage = require("../repositories/messages/create");
+const updateIntent = require("../repositories/intents/update");
 
 const handler = async (event) => {
   const deps = handler.dependencies();
@@ -22,6 +23,11 @@ const handler = async (event) => {
     ...features,
   });
 
+  await deps.updateIntent({
+    main_intent: features.main_intent,
+    was_answered: features.was_answered,
+  });
+
   return deps.responseHandler(200, watsonResponse);
 };
 
@@ -29,6 +35,7 @@ handler.dependencies = () => ({
   parseRequest,
   responseHandler,
   createMessage,
+  updateIntent,
   watsonService,
 });
 
