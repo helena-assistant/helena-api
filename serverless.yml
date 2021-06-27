@@ -95,6 +95,6 @@ resources:
           - AttributeName: intent
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
         TableName: ${self:provider.environment.INTENTS_TABLE}
