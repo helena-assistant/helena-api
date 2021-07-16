@@ -1,5 +1,4 @@
 const AWS = require("aws-sdk");
-const { NOT_ANSWERED_INTENT } = require("../../constants");
 
 class DynamoDB {
   dynamoDb = null;

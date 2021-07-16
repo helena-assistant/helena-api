@@ -11,6 +11,7 @@ provider:
   environment:
     DIALOG_TABLE: dialog-table
     INTENTS_TABLE: intents-table
+    RATINGS_TABLE: ratings-table
     WATSON_ASSISTANT_IAM_APIKEY: ${env:WATSON_ASSISTANT_IAM_APIKEY}
     WATSON_ASSISTANT_ID: ${env:WATSON_ASSISTANT_ID}
   apiGateway:
@@ -27,6 +28,12 @@ provider:
         - Effect: Allow
           Action:
             - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:Scan
+
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.INTENTS_TABLE}"
+        - Effect: Allow
+          Action:
             - dynamodb:UpdateItem
             - dynamodb:Scan
 
@@ -60,11 +67,28 @@ functions:
           path: /list
           method: get
           cors: true
+
   list-intents:
     handler: handlers/list-intents.handler
     events:
       - http:
           path: /intents/list
+          method: get
+          cors: true
+
+  rate:
+    handler: handlers/rate.handler
+    events:
+      - http:
+          path: /rate
+          method: post
+          cors: true
+
+  list-ratings:
+    handler: handlers/list-ratings.handler
+    events:
+      - http:
+          path: /rate
           method: get
           cors: true
 
@@ -99,3 +123,18 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
         TableName: ${self:provider.environment.INTENTS_TABLE}
+
+    RatingsDynamoDbTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: N
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.RATINGS_TABLE}
