@@ -37,7 +37,7 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:Scan
 
-          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.INTENTS_TABLE}"
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.RATINGS_TABLE}"
 
 plugins:
   - serverless-offline
