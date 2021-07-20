@@ -9,7 +9,7 @@ provider:
   useDotenv: true
   runtime: nodejs12.x
   environment:
-    DIALOG_TABLE: dialog-table
+    MESSAGES_TABLE: message-table
     INTENTS_TABLE: intents-table
     RATINGS_TABLE: ratings-table
     WATSON_ASSISTANT_IAM_APIKEY: ${env:WATSON_ASSISTANT_IAM_APIKEY}
@@ -24,7 +24,7 @@ provider:
             - dynamodb:PutItem
             - dynamodb:Query
 
-          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DIALOG_TABLE}"
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.MESSAGES_TABLE}"
         - Effect: Allow
           Action:
             - dynamodb:PutItem
@@ -94,20 +94,24 @@ functions:
 
 resources:
   Resources:
-    DialogDynamoDbTable:
+    MessageDynamoDbTable:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
           - AttributeName: main_intent
             AttributeType: S
+          - AttributeName: created_at
+            AttributeType: S
         KeySchema:
           - AttributeName: main_intent
             KeyType: HASH
+          - AttributeName: created_at
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 10
           WriteCapacityUnits: 10
-        TableName: ${self:provider.environment.DIALOG_TABLE}
+        TableName: ${self:provider.environment.MESSAGES_TABLE}
 
     IntentsDynamoDbTable:
       Type: "AWS::DynamoDB::Table"

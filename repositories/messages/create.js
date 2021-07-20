@@ -16,7 +16,7 @@ const create = async ({
   const dateISOString = new Date().toISOString();
 
   const params = {
-    TableName: process.env.DIALOG_TABLE,
+    TableName: process.env.MESSAGES_TABLE,
     Item: {
       user_message,
       session_id,
@@ -27,8 +27,8 @@ const create = async ({
       suggestions,
       intents,
       entities,
-      createdAt: dateISOString,
-      updatedAt: dateISOString,
+      created_at: dateISOString,
+      updated_at: dateISOString,
     },
   };
 
