@@ -10,25 +10,30 @@ const handler = async (event) => {
     body: { message, sessionId },
   } = deps.parseRequest(event);
 
-  const watsonResponse = await deps.watsonService.sendAssistantMessage(
-    message,
-    sessionId
-  );
+  try {
+    const watsonResponse = await deps.watsonService.sendAssistantMessage(
+      message,
+      sessionId
+    );
 
-  const features = deps.watsonService.extractFeatures(watsonResponse);
+    const features = deps.watsonService.extractFeatures(watsonResponse);
 
-  await deps.createMessage({
-    user_message: message,
-    session_id: sessionId,
-    ...features,
-  });
+    await deps.createMessage({
+      user_message: message,
+      session_id: sessionId,
+      ...features,
+    });
 
-  await deps.updateIntent({
-    main_intent: features.main_intent,
-    was_answered: features.was_answered,
-  });
+    await deps.updateIntent({
+      main_intent: features.main_intent,
+      was_answered: features.was_answered,
+    });
 
-  return deps.responseHandler(200, watsonResponse);
+    return deps.responseHandler(200, watsonResponse);
+  } catch (error) {
+    console.log(error.code, error.body);
+    return deps.responseHandler(error.code, error.body);
+  }
 };
 
 handler.dependencies = () => ({

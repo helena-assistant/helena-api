@@ -37,12 +37,7 @@ class WatsonService {
 
   sendAssistantMessage = async (message, sessionId) => {
     const payload = this.getPayload(message, sessionId);
-    try {
-      return this.assistant.message(payload);
-    } catch (e) {
-      payload.sessionId = await this.getSession();
-      return this.assistant.message(payload);
-    }
+    return await this.assistant.message(payload);
   };
 
   extractFeatures = (response) => {
